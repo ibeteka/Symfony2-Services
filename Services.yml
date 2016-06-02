@@ -1,0 +1,141 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+
+parameters:
+    #security.exception_listener.class: AuthenticationBundle\Security\Firewall\ExceptionListener
+
+
+
+services:
+
+     admin_service:
+         class:  AdminBundle\Controller\AdminController
+         arguments: [@router]
+         scope: request
+#         calls:
+#             - [ setContainer, [ @service_container ]]
+
+     employee_profile_service:
+         class: ProfileBundle\Controller\ProfileController
+         arguments: [@router]
+         scope: request
+         
+         
+     departement_profile_service:
+         class: DepartementBundle\Controller\DepartementController
+         arguments: [@router]
+         scope: request
+         
+         
+     redirect.after.login:
+        class: AuthenticationBundle\Redirection\AfterLoginRedirection
+        arguments: [@router]
+
+
+     redirect.after.logout:
+        class: AuthenticationBundle\Redirection\AfterLogoutRedirection
+        arguments: [@router, @security.context]
+         
+         
+     update_project_handler:
+        class: XandrieBundle\Handler\UpdateProjectHandler
+        arguments: ['@doctrine.orm.entity_manager']
+        
+        
+     validator.form.email:
+        class: XandrieBundle\Validator\Constraints\EmailExistValidator
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: validator.constraint_validator, alias: constraint_validator_email }
+            
+            
+     validator.form.departement.ref:
+        class: XandrieBundle\Validator\Constraints\DepartementRefValidator
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: validator.constraint_validator, alias: constraint_validator_departement_ref }     
+         
+            
+                   
+     validator.form.departement.name:
+        class: XandrieBundle\Validator\Constraints\DepartementNameValidator
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: validator.constraint_validator, alias: constraint_validator_departement_name }
+            
+     
+     
+     validator.form.project.constraint:
+        class:  XandrieBundle\Validator\Constraints\ProjectDate
+            
+      
+            
+     validator.form.project.expected.date.constraint:
+        class:  XandrieBundle\Validator\Constraints\ProjectDateExpected
+        
+               
+            
+     validator.form.project.date:
+        class: XandrieBundle\Validator\Constraints\ProjectDateValidator
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: validator.constraint_validator, alias: constraint_validator_project_date }
+        
+        
+        
+     validator.form.project.expected_date:
+        class: XandrieBundle\Validator\Constraints\ProjectDateExpectedValidator
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: validator.constraint_validator, alias: constraint_validator_project_expected_date }       
+            
+            
+                       
+     validator.form.parent_project_name:
+        class:  XandrieBundle\Validator\Constraints\ProjectParentNameValidator
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: validator.constraint_validator, alias: constraint_validator_project_parent_name }
+            
+                      
+     response_service:
+        class:  Symfony\Component\HttpFoundation\Response
+      
+      
+            
+     download_document_service:
+        class:  XandrieBundle\Tools\Download
+        arguments:  ['@response_service']
+        
+        
+     
+     chart_factory:
+        class:   XandrieBundle\Tools\Charts\ChartFactory
+        
+        
+        
+     dashboard_builder:
+        class:   AppBundle\Entity\Dashboard\DashboardBuilder
+        arguments: [@router, @form.factory]
+        
+        
+     chart_manager:
+        class:    AppBundle\Entity\Manager\ChartManager
+        arguments: ['@doctrine.orm.entity_manager']
+        
+        
+     dashboard_request_manager:
+        class:    AppBundle\Entity\Manager\DashboardRequestManager
+        arguments: ['@service_container']
+     
+     
+     project_manager:
+        class:    AppBundle\Entity\Manager\ProjectManager
+        arguments: ['@service_container', '@doctrine.orm.entity_manager']
+     
+        
+     departement_manager:
+        class:   AppBundle\Entity\Manager\DepartementManager
+        arguments:  ['@service_container', '@doctrine.orm.entity_manager']
+        
+             
